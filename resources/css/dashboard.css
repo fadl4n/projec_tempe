@@ -1,0 +1,55 @@
+.bi {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /*
+   * Sidebar
+   */
+
+   .sidebar .offcanvas-body {
+    background-color: #4CAF50; /* Warna background sesuai sidebar */
+    overflow-y: auto;
+    height: 100%;
+}
+
+
+  @media (min-width: 768px) {
+    .sidebar .offcanvas-lg {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 48px;
+    }
+    .navbar-search {
+      display: block;
+    }
+  }
+
+  .sidebar .nav-link {
+    color: #f1c27d;
+}
+.sidebar .nav-link.active {
+    font-weight: bold;
+    color: #f1c27d;
+}
+
+
+  .sidebar-heading {
+    font-size: .75rem;
+  }
+
+  /*
+   * Navbar
+   */
+
+  .navbar-brand {
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+    background-color: rgba(0, 0, 0, .25);
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+  }
+
+  .navbar .form-control {
+    padding: .75rem 1rem;
+  }
