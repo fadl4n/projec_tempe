@@ -46,4 +46,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function keranjang()
+    {
+        return $this->hasMany(Keranjang::class, 'name', 'name'); // Relasi menggunakan kolom 'name'
+    }
 }

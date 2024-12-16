@@ -20,4 +20,9 @@ class Produk extends Model
     {
         return $this->hasOne(Stok::class, 'nama_produk', 'nama_produk');
     }
+    public function penjualan()
+    {
+        return $this->belongsToMany(Penjualan::class, 'nama_produk','nama_produk')
+                    ->withPivot('jumlah_pesanan');
+    }
 }

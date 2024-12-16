@@ -10,7 +10,7 @@ class PelangganController extends Controller
     /**
      * Buat middleware untuk memastikan hanya pengguna non-admin yang bisa mengakses controller ini.
      */
-   
+
 
     /**
      * Menampilkan daftar produk kepada pelanggan.
@@ -23,6 +23,7 @@ class PelangganController extends Controller
         // Menampilkan view 'dashboard.dash-user.index' dan mengirimkan data produk
         return view('dashboard.dash-user.index', compact('produks'));
     }
+   
 
     /**
      * Fungsi-fungsi berikut ini (create, store, show, edit, update, destroy)

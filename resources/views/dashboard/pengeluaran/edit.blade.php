@@ -54,6 +54,17 @@
                 </div>
             @enderror
         </div>
+        <div class="mb-3">
+            <label for="kategori" class="form-label">Kategori</label>
+            <select class="form-select @error('kategori') is-invalid @enderror" name="kategori">
+                <option value="bahan" {{ old('kategori') == 'bahan' ? 'selected' : '' }}>Bahan</option>
+                <option value="jasa" {{ old('kategori') == 'jasa' ? 'selected' : '' }}>Jasa</option>
+                <option value="lainnya" {{ old('kategori') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
+            </select>
+            @error('kategori')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
         <div class="mb-3">
             <label for="tanggal" class="form-label">Tanggal</label>

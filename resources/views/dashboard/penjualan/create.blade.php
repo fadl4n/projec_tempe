@@ -55,6 +55,27 @@
                 <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
+            <div class="mb-3">
+                <label for="metode_pengiriman" class="form-label">Metode Pengiriman</label>
+                <select name="metode_pengiriman" class="form-select @error('metode_pengiriman') is-invalid @enderror">
+                    <option value="dijemput" {{ old('metode_pengiriman', $penjualan->metode_pengiriman ?? '') == 'dijemput' ? 'selected' : '' }}>dijemput</option>
+                    <option value="diantar" {{ old('metode_pengiriman', $penjualan->metode_pengiriman ?? '') == 'diantar' ? 'selected' : '' }}>diantar</option>
+                </select>
+                @error('metode_pengiriman')
+                <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="mb-3">
+                <label for="metode_pembayaran" class="form-label">Metode Pembayaran</label>
+                <select name="metode_pembayaran" class="form-select @error('metode_pembayaran') is-invalid @enderror">
+                    <option value="cash" {{ old('metode_pembayaran', $penjualan->metode_pembayaran ?? '') == 'cash' ? 'selected' : '' }}>cash</option>
+                    <option value="rekening" {{ old('metode_pembayaran', $penjualan->metode_pembayaran ?? '') == 'rekening' ? 'selected' : '' }}>rekening</option>
+                </select>
+                @error('metode_pembayaran')
+                <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
 
             <div class="mb-3">
                 <label for="tgl_transaksi" class="form-label">Tanggal Transaksi</label>
@@ -63,18 +84,17 @@
                 <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-
-            <div class="mb-3">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-select @error('status') is-invalid @enderror" name="status">
-                    <option value="">Pilih Status</option>
-                    <option value="terkirim" {{ old('status') == 'terkirim' ? 'selected' : '' }}>Terkirim</option>
-                    <option value="tidak terkirim" {{ old('status') == 'tidak terkirim' ? 'selected' : '' }}>Tidak Terkirim</option>
-                </select>
-                @error('status')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+    <div class="mb-3">
+    <label for="status" class="form-label">Status</label>
+    <select class="form-select @error('status') is-invalid @enderror" name="status">
+        <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>pending</option>
+        <option value="proses" {{ old('status') == 'proses' ? 'selected' : '' }}>Proses</option>
+        <option value="selesai" {{ old('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
+    </select>
+    @error('status')
+    <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
 
             @if(session('error'))
                 <div class="alert alert-danger">

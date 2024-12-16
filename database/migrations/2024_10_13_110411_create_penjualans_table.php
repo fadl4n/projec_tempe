@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('status');
             $table->string('tgl_transaksi');
             $table->string('total_harga');
-
             $table->timestamps();
         });
     }

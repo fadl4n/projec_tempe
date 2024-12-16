@@ -14,5 +14,13 @@ class Keranjang extends Model
     {
         return $this->belongsTo(Produk::class, 'nama_produk', 'nama_produk');
     }
-   
+    public function penjualan() {
+        return $this->hasOne(Penjualan::class);
+    }
+    public function User()
+    {
+        return $this->belongsTo(Produk::class, 'name', 'name');
+    }
+
+
 }

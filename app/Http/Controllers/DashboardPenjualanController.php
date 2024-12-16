@@ -13,18 +13,33 @@ class DashboardPenjualanController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-        $query = Penjualan::with('produk');
+{
+    $query = Penjualan::with('produk');
 
-        // Filter berdasarkan bulan dan tahun jika ada
-        if ($request->filled('bulan') && $request->filled('tahun')) {
-            $query->whereMonth('tgl_transaksi', $request->bulan)
-                  ->whereYear('tgl_transaksi', $request->tahun);
-        }
-
-        $penjualan = $query->orderBy('tgl_transaksi', 'asc')->paginate(10);
-        return view('dashboard.penjualan.index', ['penjualans' => $penjualan]);
+    // Filter berdasarkan bulan dan tahun jika ada
+    if ($request->filled('bulan') && $request->filled('tahun')) {
+        $query->whereMonth('tgl_transaksi', $request->bulan)
+              ->whereYear('tgl_transaksi', $request->tahun);
     }
+
+    // Urutkan berdasarkan status: pending -> proses -> selesai
+    $query->orderByRaw("
+        CASE
+            WHEN status = 'pending' THEN 1
+            WHEN status = 'proses' THEN 2
+            WHEN status = 'selesai' THEN 3
+            ELSE 4
+        END
+    ");
+
+    // Urutkan tambahan berdasarkan tanggal transaksi
+    $query->orderBy('tgl_transaksi', 'asc');
+
+    $penjualan = $query->paginate(10);
+
+    return view('dashboard.penjualan.index', ['penjualans' => $penjualan]);
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -41,12 +56,12 @@ class DashboardPenjualanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_pelanggan' => 'required|string|max:255',
+
             'alamat_pelanggan' => 'required|string',
             'nama_produk' => 'required|string',
             'jumlah_pesanan' => 'required|integer|min:1',
             'tgl_transaksi' => 'required|date',
-            'status' => 'required|in:terkirim,tidak terkirim',
+            'status' => 'required',
         ]);
 
         // Ambil harga produk berdasarkan nama produk
@@ -92,12 +107,12 @@ class DashboardPenjualanController extends Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
-            'nama_pelanggan' => 'required|string|max:255',
+
             'alamat_pelanggan' => 'required|string',
             'nama_produk' => 'required|string',
             'jumlah_pesanan' => 'required|integer|min:1',
             'tgl_transaksi' => 'required|date',
-            'status' => 'required|in:terkirim,tidak terkirim',
+            'status' => 'required',
         ]);
 
         $penjualan = Penjualan::findOrFail($id);
@@ -147,4 +162,61 @@ class DashboardPenjualanController extends Controller
         return redirect()->route('dashboard-penjualan.index')
                          ->with('success', 'Data penjualan berhasil dihapus.');
     }
+    /**
+ * Show the details of a resource.
+ */
+public function detail(string $id)
+{
+    $penjualan = Penjualan::findOrFail($id);
+    return view('dashboard.penjualan.detail', compact('penjualan'));
+}
+
+/**
+ * Update the status of a resource.
+ */
+public function updateStatus(Request $request, string $id)
+{
+    $penjualan = Penjualan::findOrFail($id);
+
+   
+
+    // Menyimpan jumlah stok yang akan diubah
+    $stok = Stok::where('nama_produk', $penjualan->nama_produk)->firstOrFail();
+
+    // Jika status diubah menjadi batal, kita kembalikan stok
+    if ($request->status == 'batal' && $penjualan->status != 'batal') {
+        // Mengembalikan stok jika status sebelumnya bukan 'batal'
+        $stok->jumlah += $penjualan->jumlah_pesanan;
+        $stok->save();
+    }
+
+    // Update status penjualan
+    $penjualan->update(['status' => $request->status]);
+
+    // Jika status berubah dari 'batal' ke status lain, kurangi stok lagi
+    if ($request->status != 'batal' && $penjualan->status == 'batal') {
+        $stok->jumlah -= $penjualan->jumlah_pesanan;
+        $stok->save();
+    }
+
+    return redirect()->route('dashboard-penjualan.index')
+                     ->with('success', 'Status penjualan berhasil diperbarui');
+}
+
+
+/**
+ * Display the specified resource (detail penjualan).
+ */
+public function show($id)
+{
+    // Mengambil data penjualan berdasarkan ID
+    $penjualan = Penjualan::findOrFail($id);
+
+    // Mengambil produk yang memiliki nama yang sama dengan nama_produk di tabel penjualan
+    $produk = Produk::where('nama_produk', $penjualan->nama_produk)->get();
+
+    return view('dashboard.penjualan.detail', compact('penjualan', 'produk'));
+}
+
+
 }

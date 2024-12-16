@@ -39,14 +39,13 @@
 </form>
 
 <table class="table table-bordered">
-    <thead  >
+    <thead>
         <tr>
             <th>No</th>
             <th>Nama Pelanggan</th>
-            <th>Alamat Pelanggan</th> <!-- Kolom baru untuk alamat pelanggan -->
-            <th>Nama Produk</th>
-            <th>Jumlah Pesanan</th>
-            <th>Total Harga</th>
+            <th>Alamat Pelanggan</th>
+            <th>Metode Pengiriman</th>
+            <th>Metode Pembayaran</th>
             <th>Tanggal Transaksi</th>
             <th>Status</th>
             <th>Aksi</th>
@@ -57,35 +56,26 @@
             <tr>
                 <td>{{ $penjualans->firstItem() + $index }}</td>
                 <td>{{ $dataPenjualan->nama_pelanggan }}</td>
-                <td>{{ $dataPenjualan->alamat_pelanggan }}</td> <!-- Tampilkan alamat pelanggan -->
-                <td>{{ $dataPenjualan->nama_produk }}</td>
-                <td>{{ $dataPenjualan->jumlah_pesanan }}</td>
-                <td>
-                    {{-- Pastikan produk terkait ditemukan --}}
-                    @if ($dataPenjualan->produk)
-                        Rp{{ number_format($dataPenjualan->jumlah_pesanan * $dataPenjualan->produk->harga, 0, ',', '.') }}
-                    @else
-                        Produk tidak ditemukan
-                    @endif
-                </td>
+                <td>{{ $dataPenjualan->alamat_pelanggan }}</td>
+                <td>{{ ucfirst($dataPenjualan->metode_pengiriman) }}</td>
+                <td>{{ ucfirst($dataPenjualan->metode_pembayaran) }}</td>
+
                 <td>{{ \Carbon\Carbon::parse($dataPenjualan->tgl_transaksi)->format('d-m-Y') }}</td>
-                <td>{{ $dataPenjualan->status }}</td>
                 <td>
-                    <a href="/dashboard-penjualan/{{ $dataPenjualan->id }}/edit" class="btn btn-warning">
-                        <i class="bi bi-pencil-fill"></i>Edit
+                    <span style="color:
+                        {{ $dataPenjualan->status == 'pending' ? 'red' : ($dataPenjualan->status == 'proses' ? 'blue' : 'green') }};">
+                        {{ ucfirst($dataPenjualan->status) }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{{ route('dashboard-penjualan.show', $dataPenjualan->id) }}" class="btn btn-info">
+                        <i class="bi bi-eye-fill"></i> Detail
                     </a>
-                    <form action="/dashboard-penjualan/{{ $dataPenjualan->id }}" method="post" class="d-inline">
-                        @method('DELETE')
-                        @csrf
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin akan menghapus data?')">
-                            <i class="bi bi-bucket"></i>Hapus
-                        </button>
-                    </form>
                 </td>
             </tr>
         @empty
             <tr>
-                <td colspan="9" class="text-center">Tidak ada data penjualan.</td>
+                <td colspan="6" class="text-center">Tidak ada data penjualan.</td>
             </tr>
         @endforelse
     </tbody>

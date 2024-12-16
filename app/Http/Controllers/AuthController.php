@@ -34,7 +34,7 @@ class AuthController extends Controller
             $user = Auth::user();
             if ($user->isAdmin === 0) {
                 // Arahkan pengguna non-admin ke dashboard pengguna
-                return redirect()->route('dashboard-dash-user.index'); // Ganti dengan route yang sesuai
+                return redirect()->route('dashboard-about.index'); // Ganti dengan route yang sesuai
             }
 
             // Arahkan pengguna admin ke dashboard utama
@@ -89,4 +89,5 @@ class AuthController extends Controller
 
         return redirect('/login');
     }
+
 }

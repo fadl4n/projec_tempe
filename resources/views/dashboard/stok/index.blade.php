@@ -7,7 +7,7 @@
     <h1 class="mb-4">Daftar Stok</h1>
 
     <!-- Tombol Tambah Data Stok -->
-    <a href="{{ route('dashboard-stok.create') }}" class="btn mb-3" style="background-color: #4CAF50; color: white;">
+     class="btn mb-3" style="background-color: #4CAF50; color: white;">
         <i class="bi bi-plus-circle-fill"></i> Tambah Data Stok
     </a>
 

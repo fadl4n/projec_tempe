@@ -81,21 +81,20 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/">Beranda</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard-dash-user.index') }}">Produk</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#kontak">Kontak</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Login</a>
-                    </li>
-                </ul>
+            <div class="navbar-nav">
+                <form action="{{ route('dashboard-dash-user.index') }}" method="get" class="d-inline">
+                    <button type="submit" class="nav-link bg-transparent border-0 p-3">Home</button>
+                </form>
+                <form action="{{ route('dashboard-about.index') }}" method="get" class="d-inline">
+                    <button type="submit" class="nav-link bg-transparent border-0 p-3">About</button>
+                </form>
+                <a href="{{ route('dashboard-keranjang.index') }}" class="nav-link p-3">
+                    Keranjang
+                </a>
+                <form action="/logout" method="post" class="d-inline">
+                    @csrf
+                    <button type="submit" class="nav-link bg-transparent border-0 p-3">Logout</button>
+                </form>
             </div>
         </div>
     </nav>
@@ -110,7 +109,8 @@
                 Tempe Keluarga dibuat dari bahan berkualitas premium, tanpa bahan pengawet,
                 dan diproses secara higienis untuk menjaga kesegarannya.
             </p>
-            <a href="https://www.tempekeluarga.com" class="btn">Shop Now</a>
+            <a href="{{ route('dashboard-dash-user.index') }}" class="btn">Shop Now</a>
+
         </div>
         <!-- Bagian Gambar -->
         <div class="image-container">

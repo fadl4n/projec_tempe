@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pengeluaran;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DashboardPengeluaranController extends Controller
 {
@@ -17,15 +18,24 @@ class DashboardPengeluaranController extends Controller
 
         $query = Pengeluaran::query();
 
-        // Filter data berdasarkan bulan dan tahun jika dipilih
-        if ($bulan && $tahun) {
-            $query->whereYear('tanggal', $tahun)->whereMonth('tanggal', $bulan);
+        if ($request->filled('kategori')) {
+            $query->where('kategori', $request->kategori);
         }
 
-        // Urutkan data berdasarkan tanggal terbaru
-        $pengeluarans = $query->orderBy('tanggal', 'desc')->paginate(10);
+        if ($request->filled('bulan')) {
+            $query->whereMonth('tanggal', $request->bulan);
+        }
 
-        return view('dashboard.pengeluaran.index', compact('pengeluarans', 'bulan', 'tahun'));
+        if ($request->filled('tahun')) {
+            $query->whereYear('tanggal', $request->tahun);
+        }
+
+        $pengeluaran = $query->paginate(10);
+
+        // Urutkan data berdasarkan tanggal terbaru
+        $pengeluaran = $query->orderBy('tanggal', 'desc')->paginate(10);
+
+        return view('dashboard.pengeluaran.index', compact('pengeluaran', 'bulan', 'tahun'));
     }
 
     public function create()
@@ -41,6 +51,7 @@ class DashboardPengeluaranController extends Controller
             'satuan' => 'required|string|max:50',
             'ttl_harga' => 'required|string',
             'tanggal' => 'required|date',
+            'kategori' => 'required|in:bahan,jasa,lainnya', // Add validation for kategori
         ]);
 
         // Menghapus format Rp dan titik sebelum menyimpan
@@ -65,8 +76,10 @@ class DashboardPengeluaranController extends Controller
             'satuan' => 'required|string|max:50',
             'ttl_harga' => 'required|string',
             'tanggal' => 'required|date',
+            'kategori' => 'required|in:bahan,jasa,lainnya', // Add validation for kategori
         ]);
 
+        // Menghapus format Rp dan titik sebelum menyimpan
         $validated['ttl_harga'] = str_replace('.', '', $validated['ttl_harga']);
 
         $pengeluaran = Pengeluaran::findOrFail($id);
@@ -81,5 +94,40 @@ class DashboardPengeluaranController extends Controller
         $pengeluaran->delete();
 
         return redirect('/dashboard-pengeluaran')->with('success', 'Data pengeluaran berhasil dihapus.');
+    }
+
+    public function downloadPdf(Request $request)
+{
+    // Ambil data pengeluaran dengan filter
+    $pengeluaranQuery = Pengeluaran::query();
+
+    if ($request->filled('kategori')) {
+        $pengeluaranQuery->where('kategori', $request->kategori);
+    }
+
+    if ($request->filled('bulan')) {
+        $pengeluaranQuery->whereMonth('tanggal', $request->bulan);
+    }
+
+    if ($request->filled('tahun')) {
+        $pengeluaranQuery->whereYear('tanggal', $request->tahun);
+    }
+
+    // Ambil data pengeluaran setelah filter
+    $pengeluaran = $pengeluaranQuery->get();
+    $totalPengeluaran = $pengeluaran->sum('ttl_harga');
+
+    // Kirim data ke tampilan PDF
+    $pdf = Pdf::loadView('dashboard.pengeluaran.pdf', compact('pengeluaran', 'totalPengeluaran', 'request'));
+    return $pdf->stream('dataPengeluaran.pdf');
+}
+
+
+
+
+
+    public function show($id)
+    {
+
     }
 }

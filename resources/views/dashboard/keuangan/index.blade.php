@@ -3,12 +3,14 @@
 @section('title', 'Data Keuangan')
 
 @section('content')
-<div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3">Laporan Keuangan Tahun {{ $tahun }}</h1>
+        <a href="{{ route('dashboard-keuangan.pdf', ['tahun' => $tahun]) }}" class="btn btn-danger">
+            <i class="bi bi-file-earmark-pdf"></i> Unduh PDF
+        </a>
     </div>
 
-    <form action="/dashboard-keuangan" method="GET" class="row mb-4 align-items-end">
+    <form action="{{ route('dashboard-keuangan.index') }}" method="GET" class="row mb-4 align-items-end">
         <div class="col-md-4">
             <label for="tahun" class="form-label">Pilih Tahun:</label>
             <select name="tahun" id="tahun" class="form-select">
@@ -25,7 +27,7 @@
     </form>
 
     <table class="table table-bordered table-hover">
-        <thead >
+        <thead>
             <tr>
                 <th>Bulan</th>
                 <th>Pemasukan</th>
@@ -46,5 +48,10 @@
             @endforeach
         </tbody>
     </table>
-</div>
+
+    <!-- Pesan jika tidak ada data -->
+    @if ($dataBulan->isEmpty())
+        <p class="text-center mt-4">Tidak ada data keuangan untuk tahun {{ $tahun }}.</p>
+    @endif
 @endsection
+    
